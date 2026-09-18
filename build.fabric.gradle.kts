@@ -70,7 +70,7 @@ tasks.processResources {
     val props = mapOf(
         "version" to project.version,
         "mc" to minecraftVersion,
-        "fabricId" to project.property("mod.fabric_id"),
+        "modId" to project.property("mod.id"),
         "modName" to project.property("mod.name"),
         "modDescription" to project.property("mod.description"),
         "authors" to project.property("mod.authors"),

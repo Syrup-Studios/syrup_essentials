@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "${fabricId}",
+	"id": "${modId}",
 	"version": "${version}",
 	"name": "${modName}",
 	"description": "${modDescription}",
