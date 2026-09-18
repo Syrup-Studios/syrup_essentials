@@ -104,6 +104,11 @@ public class TeleportManager {
                         .withStyle(style -> style
                                 .withColor(ChatFormatting.GREEN)
                                 .withBold(true)
+                                //? if >=1.21.11 {
+                                /*.withClickEvent(new ClickEvent.RunCommand(
+                                        CommandUtil.commandPath("tpaccept " + sender.getUUID())))
+                                .withHoverEvent(new HoverEvent.ShowText(
+                                        Component.literal("Accept teleport request")))*///?} else {
                                 .withClickEvent(new ClickEvent(
                                         ClickEvent.Action.RUN_COMMAND,
                                         CommandUtil.commandPath("tpaccept " + sender.getUUID())
@@ -112,6 +117,7 @@ public class TeleportManager {
                                         HoverEvent.Action.SHOW_TEXT,
                                         Component.literal("Accept teleport request")
                                 ))
+                                //?}
                         ))
                 .append(Component.literal(" | ")
                         .withStyle(ChatFormatting.WHITE))
@@ -119,6 +125,11 @@ public class TeleportManager {
                         .withStyle(style -> style
                                 .withColor(ChatFormatting.RED)
                                 .withBold(true)
+                                //? if >=1.21.11 {
+                                /*.withClickEvent(new ClickEvent.RunCommand(
+                                        CommandUtil.commandPath("tpdeny " + sender.getUUID())))
+                                .withHoverEvent(new HoverEvent.ShowText(
+                                        Component.literal("Deny teleport request")))*///?} else {
                                 .withClickEvent(new ClickEvent(
                                         ClickEvent.Action.RUN_COMMAND,
                                         CommandUtil.commandPath("tpdeny " + sender.getUUID())
@@ -127,6 +138,7 @@ public class TeleportManager {
                                         HoverEvent.Action.SHOW_TEXT,
                                         Component.literal("Deny teleport request")
                                 ))
+                                //?}
                         ));
     }
 
@@ -233,7 +245,7 @@ public class TeleportManager {
     }
 
     private static boolean executeApprovedTeleport(TeleportRequest request) {
-        MinecraftServer server = request.getSenderPlayer().getServer();
+        MinecraftServer server = ((ServerLevel) request.getSenderPlayer().level()).getServer();
 
         if (server == null) {
             return false;
@@ -319,7 +331,7 @@ public class TeleportManager {
 
     public static int jump(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = (ServerLevel) player.level();
         double maxDistance = SyrupEssentialsConfig.get().teleportation().jump().maxDistance();
         Vec3 start = player.getEyePosition();
         Vec3 look = player.getLookAngle();

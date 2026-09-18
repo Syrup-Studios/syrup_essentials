@@ -9,23 +9,23 @@
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/Syrup-Studios/syrup-essentials"
 	},
 	"license": "RSL-1.0",
 	"icon": "assets/syrup-essentials/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"net.syrupstudios.syrupessentials.SyrupEssentials"
+			"net.syrupstudios.syrupessentials.loaders.fabric.SyrupEssentialsFabric"
 		]
 	},
 	"mixins": [
 		"syrup-essentials.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.18.4",
-		"minecraft": "~1.20.1",
-		"java": ">=17",
+		"fabricloader": ">=${fl}",
+		"minecraft": "${mc}",
+		"java": ">=${java}",
 		"fabric-api": "*",
 		"syrup_library": ">=0.3.0"
 	}
