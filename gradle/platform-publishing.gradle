@@ -35,6 +35,7 @@ publishMods {
         minecraftVersions.add(minecraftVersion)
         client = true
         server = true
+        requires("syrup-library")
         if (loader == "fabric") requires("fabric-api")
     }
 
@@ -43,6 +44,7 @@ publishMods {
         accessToken = modrinthToken
         minecraftVersions.add(minecraftVersion)
         environment = CLIENT_AND_SERVER
+        requires { id = "9tBNzmjo" }
         if (loader == "fabric") requires("fabric-api")
     }
 }
