@@ -19,6 +19,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.syrupstudios.syrupessentials.config.SyrupEssentialsConfig;
 import net.syrupstudios.syrupessentials.data.PlayerData;
 import net.syrupstudios.syrupessentials.data.WorldData;
@@ -109,26 +110,42 @@ public class TeleportCommands {
 
         register.accept(Commands.literal("setwarp")
                 .requires(source -> SyrupEssentialsConfig.get().teleportation().warp().enabled()
+                        //? if >=1.21.11 {
+                        /*&& Commands.hasPermission(Commands.LEVEL_GAMEMASTERS).test(source))*/
+                        //?} else {
                         && source.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        //?}
                 .then(Commands.argument("warp_name", StringArgumentType.string())
                         .executes(TeleportCommands::setWarp)));
 
         register.accept(Commands.literal("teleport_last")
                 .requires(source -> SyrupEssentialsConfig.get().teleportation().teleportLast().enabled()
+                        //? if >=1.21.11 {
+                        /*&& Commands.hasPermission(Commands.LEVEL_GAMEMASTERS).test(source))*/
+                        //?} else {
                         && source.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        //?}
                 .then(Commands.argument("player", EntityArgument.player())
                         .executes(TeleportCommands::teleportLast)));
 
         register.accept(Commands.literal("delwarp")
                 .requires(source -> SyrupEssentialsConfig.get().teleportation().warp().enabled()
+                        //? if >=1.21.11 {
+                        /*&& Commands.hasPermission(Commands.LEVEL_GAMEMASTERS).test(source))*/
+                        //?} else {
                         && source.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        //?}
                 .then(Commands.argument("warp_name", StringArgumentType.string())
                         .suggests(TeleportCommands::suggestWarps)
                         .executes(TeleportCommands::delWarp)));
 
         register.accept(Commands.literal("tpx")
                 .requires(source -> SyrupEssentialsConfig.get().teleportation().tpx().enabled()
+                        //? if >=1.21.11 {
+                        /*&& Commands.hasPermission(Commands.LEVEL_GAMEMASTERS).test(source))*/
+                        //?} else {
                         && source.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        //?}
                 .then(Commands.argument("dimension", DimensionArgument.dimension())
                         .executes(TeleportCommands::tpx)));
 
@@ -151,7 +168,11 @@ public class TeleportCommands {
 
         register.accept(Commands.literal("jump")
                 .requires(source -> SyrupEssentialsConfig.get().teleportation().jump().enabled()
+                        //? if >=1.21.11 {
+                        /*&& Commands.hasPermission(Commands.LEVEL_GAMEMASTERS).test(source))*/
+                        //?} else {
                         && source.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        //?}
                         .executes(TeleportCommands::jump));
 
         if (registerToNamespace) {
@@ -211,8 +232,13 @@ public class TeleportCommands {
         try{
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
             Level level = context.getSource().getServer().overworld();
+            //? if >=1.21.11 {
+            /*BlockPos spawnPos = level.getRespawnData().pos();*/
+            //?} else {
+            BlockPos spawnPos = level.getSharedSpawnPos();
+            //?}
             teleportPlayer(
-                    new TeleportPos(level.dimension() ,level.getSharedSpawnPos().getCenter(), 0.0f, 0.0f),
+                    new TeleportPos(level.dimension(), Vec3.atCenterOf(spawnPos), 0.0f, 0.0f),
                     serverPlayer,
                     true
             );

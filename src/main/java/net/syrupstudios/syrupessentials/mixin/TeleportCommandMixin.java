@@ -5,7 +5,6 @@ import net.minecraft.server.commands.TeleportCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.RelativeMovement;
 import net.syrupstudios.syrupessentials.data.PlayerData;
 import net.syrupstudios.syrupessentials.util.DataManager;
 import net.syrupstudios.syrupessentials.util.TeleportPos;
@@ -31,7 +30,7 @@ public class TeleportCommandMixin {
             double x,
             double y,
             double z,
-            Set<RelativeMovement> relativeMovements,
+            Set<?> relativeMovements,
             float yRot,
             float xRot,
             @Coerce Object lookAt,

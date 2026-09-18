@@ -58,7 +58,11 @@ public class DataManager {
         PlayerData playerData = getOrCreatePlayer(minecraftServer,playerUUID).orElseThrow();
         if (Files.exists(path)) {
             try {
+                //? if >=1.21.11 {
+                /*playerData.readNbt(TagParser.parseCompoundFully(new String(Files.readAllBytes(path))));
+                *///?} else {
                 playerData.readNbt(TagParser.parseTag(new String(Files.readAllBytes(path))));
+                //?}
                 PLAYERS.put(playerUUID, playerData);
             } catch (Exception e) {
                 LOGGER.error("Error while reading player data: {}", e.toString());
@@ -81,7 +85,11 @@ public class DataManager {
         WorldData worldData = getOrCreateWorld(minecraftServer).orElseThrow();
         if(Files.exists(path)){
             try {
+                //? if >=1.21.11 {
+                /*worldData.readNbt(TagParser.parseCompoundFully(new String(Files.readAllBytes(path))));
+                *///?} else {
                 worldData.readNbt(TagParser.parseTag(new String(Files.readAllBytes(path))));
+                //?}
                 WORLD_DATA = worldData;
             } catch (Exception e) {
                 LOGGER.error("Error while reading world data: {}", e.toString());
@@ -143,8 +151,10 @@ public class DataManager {
             return Optional.of(PLAYERS.get(playerId));
         }
 
-        return server.getProfileCache().get(playerId)
-                .map(profile -> PLAYERS.computeIfAbsent(playerId, k -> new PlayerData(playerId, profile.getName())));
+        ServerPlayer player = server.getPlayerList().getPlayer(playerId);
+        return Optional.ofNullable(player)
+                .map(found -> PLAYERS.computeIfAbsent(playerId,
+                        k -> new PlayerData(playerId, found.getName().getString())));
     }
 
     public static Optional<PlayerData> getOrCreatePlayer(@Nullable Player player) {
@@ -152,7 +162,8 @@ public class DataManager {
             return Optional.empty();
         }
 
-        return Optional.of(PLAYERS.computeIfAbsent(player.getUUID(), k -> new PlayerData(player.getUUID(), player.getGameProfile().getName())));
+        return Optional.of(PLAYERS.computeIfAbsent(player.getUUID(),
+                k -> new PlayerData(player.getUUID(), player.getName().getString())));
     }
 
     public static Optional<WorldData> getOrCreateWorld(MinecraftServer server){

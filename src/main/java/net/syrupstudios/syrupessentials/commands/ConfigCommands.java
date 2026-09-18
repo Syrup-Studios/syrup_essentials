@@ -18,7 +18,11 @@ public final class ConfigCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("syrupessentials")
                 .then(Commands.literal("reload")
+                        //? if >=1.21.11 {
+                        /*.requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))*/
+                        //?} else {
                         .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        //?}
                         .executes(ConfigCommands::reload)));
     }
 
