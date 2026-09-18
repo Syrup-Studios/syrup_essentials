@@ -1,0 +1,56 @@
+def minecraftVersion = project.property("deps.minecraft").toString()
+if (minecraftVersion == "[VERSIONED]") {
+    throw new GradleException("Publishing requires a resolved Minecraft version")
+}
+def loader = project.name.substring(project.name.lastIndexOf('-') + 1)
+def loaderName = loader == "neoforge" ? "NeoForge" : loader.capitalize()
+def outputTaskName = ["remapJar", "reobfJar", "jar"].find { tasks.findByName(it) != null }
+def outputFile = tasks.named(outputTaskName).flatMap { it.archiveFile }
+def releaseTypeName = providers.gradleProperty("publish.release_type").get().toLowerCase()
+def curseForgeToken = providers.gradleProperty("publish.curseforge_token")
+    .orElse(providers.environmentVariable("CURSEFORGE_TOKEN"))
+def modrinthToken = providers.gradleProperty("publish.modrinth_token")
+    .orElse(providers.environmentVariable("MODRINTH_TOKEN"))
+def modVersion = project.property("mod.version")
+def uploadVersion = "${modVersion}+${minecraftVersion}-${loader}"
+def changelogFile = rootProject.file("CHANGELOGS.md")
+
+publishMods {
+    file = outputFile
+    dryRun = providers.gradleProperty("publish.dry_run").map { it.toBoolean() }.orElse(false)
+    version = uploadVersion
+    displayName = "${project.property("mod.name")} ${modVersion} for Minecraft ${minecraftVersion} (${loaderName})"
+    changelog = changelogFile.isFile() ? changelogFile.getText("UTF-8") : ""
+    switch (releaseTypeName) {
+        case "stable": type = STABLE; break
+        case "beta": type = BETA; break
+        case "alpha": type = ALPHA; break
+        default: throw new GradleException("publish.release_type must be stable, beta, or alpha")
+    }
+    modLoaders.add(loader)
+
+    curseforge {
+        projectId = providers.gradleProperty("publish.curseforge_project_id")
+        accessToken = curseForgeToken
+        minecraftVersions.add(minecraftVersion)
+        client = true
+        server = true
+        if (loader == "fabric") requires("fabric-api")
+    }
+
+    modrinth {
+        projectId = providers.gradleProperty("publish.modrinth_project_id")
+        accessToken = modrinthToken
+        minecraftVersions.add(minecraftVersion)
+        environment = CLIENT_AND_SERVER
+        if (loader == "fabric") requires("fabric-api")
+    }
+}
+
+["publishCurseforge", "publishModrinth"].each { taskName ->
+    tasks.named(taskName).configure {
+        doFirst {
+            logger.lifecycle("Publishing ${uploadVersion} for Minecraft ${minecraftVersion} (${loader})")
+        }
+    }
+}

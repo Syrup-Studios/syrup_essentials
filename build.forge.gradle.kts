@@ -2,6 +2,7 @@ import org.gradle.api.publish.maven.MavenPublication
 
 plugins {
     id("net.neoforged.moddev.legacyforge") version "2.0.143"
+    id("me.modmuss50.mod-publish-plugin") version "2.2.0"
     id("maven-publish")
 }
 
@@ -87,3 +88,5 @@ publishing {
         }
     }
 }
+
+apply(from = rootProject.file("gradle/platform-publishing.gradle"))
