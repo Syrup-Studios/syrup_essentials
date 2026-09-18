@@ -19,12 +19,14 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.syrupstudios.syruplibrary.teleport.SyrupTeleports;
+import net.syrupstudios.syruplibrary.teleport.TeleportResult;
+import net.syrupstudios.syruplibrary.teleport.TeleportTarget;
 import net.syrupstudios.syrupessentials.config.SyrupEssentialsConfig;
 import net.syrupstudios.syrupessentials.data.PlayerData;
 import org.slf4j.Logger;
 
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -280,15 +282,10 @@ public class TeleportManager {
         }
         //TODO: delay here, if 5 seconds elapses without interruption proceed to teleport
 
-        serverPlayer.teleportTo(
-                Objects.requireNonNull(serverPlayer.getServer()).getLevel(tpos.getDimensionId()),
-                tpos.getPos().x,
-                tpos.getPos().y,
-                tpos.getPos().z,
-                tpos.getYaw(),
-                tpos.getPitch()
-        );
-        return true;
+        return SyrupTeleports.teleport(
+                serverPlayer,
+                new TeleportTarget(tpos.getDimensionId(), tpos.getPos(), tpos.getYaw(), tpos.getPitch())
+        ) == TeleportResult.SUCCESS;
     }
 
     public void onServerTick(){
