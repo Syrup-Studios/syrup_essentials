@@ -4,22 +4,22 @@ license="${license}"
 mixinConfigs="syrup-essentials.mixins.json"
 
 [[mods]]
-modId="syrup_essentials"
+modId="${modId}"
 version="${version}"
 displayName="${modName}"
 authors="${authors}"
 description='''${modDescription}'''
 
-[[dependencies.syrup_essentials]]
+[[dependencies.${modId}]]
 modId="minecraft"
 mandatory=true
 versionRange="[${mc}]"
 ordering="NONE"
 side="BOTH"
 
-[[dependencies.syrup_essentials]]
+[[dependencies.${modId}]]
 modId="syrup_library"
 mandatory=true
-versionRange="[0.3.0,)"
+versionRange="[${syrupLibraryVersion},)"
 ordering="AFTER"
 side="BOTH"

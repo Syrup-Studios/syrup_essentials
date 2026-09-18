@@ -1,17 +1,16 @@
 {
 	"schemaVersion": 1,
-	"id": "syrup-essentials",
+	"id": "${fabricId}",
 	"version": "${version}",
-	"name": "Syrup Essentials",
-	"description": "Syrup Studio's Essentials Mod adding commands for players and server operators",
+	"name": "${modName}",
+	"description": "${modDescription}",
 	"authors": [
-		"Me!"
+		"${authors}"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/Syrup-Studios/syrup-essentials"
+		"sources": "${sources}"
 	},
-	"license": "RSL-1.0",
+	"license": "${license}",
 	"icon": "assets/syrup-essentials/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -27,6 +26,6 @@
 		"minecraft": "${mc}",
 		"java": ">=${java}",
 		"fabric-api": "*",
-		"syrup_library": ">=0.3.0"
+		"syrup_library": ">=${syrupLibraryVersion}"
 	}
 }

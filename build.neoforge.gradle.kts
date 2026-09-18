@@ -45,10 +45,12 @@ tasks.processResources {
     val props = mapOf(
         "version" to project.version,
         "mc" to minecraftVersion,
+        "modId" to project.property("mod.id"),
         "modName" to project.property("mod.name"),
         "modDescription" to project.property("mod.description"),
         "authors" to project.property("mod.authors"),
         "license" to project.property("mod.license"),
+        "syrupLibraryVersion" to (project.property("syrup_library_version") as String).substringBefore('+'),
         "refmap" to ""
     )
     inputs.properties(props)

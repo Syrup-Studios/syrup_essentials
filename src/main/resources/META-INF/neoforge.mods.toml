@@ -3,7 +3,7 @@ loaderVersion="[1,)"
 license="${license}"
 
 [[mods]]
-modId="syrup_essentials"
+modId="${modId}"
 version="${version}"
 displayName="${modName}"
 authors="${authors}"
@@ -12,16 +12,16 @@ description='''${modDescription}'''
 [[mixins]]
 config="syrup-essentials.mixins.json"
 
-[[dependencies.syrup_essentials]]
+[[dependencies.${modId}]]
 modId="minecraft"
 type="required"
 versionRange="[${mc}]"
 ordering="NONE"
 side="BOTH"
 
-[[dependencies.syrup_essentials]]
+[[dependencies.${modId}]]
 modId="syrup_library"
 type="required"
-versionRange="[0.3.0,)"
+versionRange="[${syrupLibraryVersion},)"
 ordering="AFTER"
 side="BOTH"
