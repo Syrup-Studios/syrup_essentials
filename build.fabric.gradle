@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = project.mod_version
+version = "${project.mod_version}+${project.minecraft_version}-fabric"
 group = project.maven_group
 
 base {
@@ -31,6 +31,7 @@ repositories {
 
 loom {
 	splitEnvironmentSourceSets()
+	fabricModJsonPath = rootProject.file("src/main/resources/fabric.mod.json")
 
 	mods {
 		"syrup-essentials" {
@@ -67,7 +68,7 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 17
+	it.options.release = project.java_version.toInteger()
 }
 
 java {
@@ -76,16 +77,27 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.toVersion(project.java_version)
+	targetCompatibility = JavaVersion.toVersion(project.java_version)
+	toolchain {
+		vendor = JvmVendorSpec.ADOPTIUM
+		languageVersion = JavaLanguageVersion.of(project.java_version.toInteger())
+	}
 }
 
 jar {
 	inputs.property "archivesName", project.base.archivesName
 
-	from("LICENSE") {
+	from(rootProject.file("LICENSE.md")) {
 		rename { "${it}_${inputs.properties.archivesName}"}
 	}
+}
+
+tasks.register("buildAndCollect", Copy) {
+	group = "build"
+	from(tasks.named("remapJar"), tasks.named("remapSourcesJar"))
+	into(rootProject.layout.buildDirectory.dir("libs/${project.mod_version}"))
+	dependsOn("build")
 }
 
 // configure the maven publication
