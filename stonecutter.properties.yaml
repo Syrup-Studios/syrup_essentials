@@ -1,0 +1,70 @@
+mod:
+  id: "syrup_essentials"
+  name: "Syrup Essentials"
+  group: "net.syrupstudios"
+  version: "0.4.1"
+  description: "Syrup Studio's Essentials Mod adding commands for players and server operators"
+  authors: "SodaSyrup"
+  license: "RSL-1.0"
+  sources: "https://github.com/Syrup-Studios/syrup-essentials"
+
+publish:
+  release_type: "beta"
+  curseforge: "1477901"
+  modrinth: "5ilOuE0e"
+
+deps.lombok: "1.18.38"
+deps.syrup_library: "0.3.0"
+loomx.loom_version: "1.17.14"
+
+"1.20.1":
+  mod.mc_releases: ["1.20.1"]
+  mod.fabric_mc_range: "1.20.1"
+  mod.forge_mc_range: "[1.20.1]"
+"1.21.1":
+  mod.mc_releases: ["1.21.1"]
+  mod.fabric_mc_range: "1.21.1"
+  mod.neoforge_mc_range: "[1.21.1]"
+"1.21.11":
+  mod.mc_releases: ["1.21.11"]
+  mod.fabric_mc_range: "1.21.11"
+  mod.neoforge_mc_range: "[1.21.11]"
+"26.2":
+  mod.mc_releases: ["26.2"]
+  mod.fabric_mc_range: "26.2"
+  mod.neoforge_mc_range: "[26.2]"
+"26.3":
+  mod.mc_releases: ["26.3"]
+  mod.fabric_mc_range: "26.3"
+  mod.neoforge_mc_range: "[26.3]"
+
+fabric:deps:
+  "1.20.1":
+    fabric_loader: "0.19.2"
+    fabric_api: "0.92.9+1.20.1"
+  "1.21.1":
+    fabric_loader: "0.19.3"
+    fabric_api: "0.116.12+1.21.1"
+  "1.21.11":
+    fabric_loader: "0.19.3"
+    fabric_api: "0.141.4+1.21.11"
+  "26.2":
+    fabric_loader: "0.19.3"
+    fabric_api: "0.160.0+26.2"
+  "26.3":
+    fabric_loader: "0.19.5"
+    fabric_api: "0.160.7+26.3"
+
+forge:deps:
+  "1.20.1":
+    forge_version: "47.4.17"
+
+neoforge:deps:
+  "1.21.1":
+    neoforge_version: "21.1.248"
+  "1.21.11":
+    neoforge_version: "21.11.45"
+  "26.2":
+    neoforge_version: "26.2.0.59"
+  "26.3":
+    neoforge_version: "26.3.0.4-beta"

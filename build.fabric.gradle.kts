@@ -1,48 +1,52 @@
-import net.fabricmc.loom.api.LoomGradleExtensionAPI
-import org.gradle.api.publish.maven.MavenPublication
-
 plugins {
-    id("net.fabricmc.fabric-loom-remap") version "1.17.14" apply false
-    id("net.fabricmc.fabric-loom") version "1.17.14" apply false
-    id("me.modmuss50.mod-publish-plugin") version "2.2.0"
-    id("maven-publish")
+    id("dev.kikugie.loom-back-compat")
+    id("me.modmuss50.mod-publish-plugin")
+    `maven-publish`
 }
 
-val remappedMinecraft = stonecutter.eval(stonecutter.current.version, "<26")
-val minecraftVersion = property("deps.minecraft") as String
-val targetJavaVersion = (property("deps.java_version") as String).toInt()
-val requiredJava = JavaVersion.toVersion(targetJavaVersion)
-apply(plugin = if (remappedMinecraft) "net.fabricmc.fabric-loom-remap" else "net.fabricmc.fabric-loom")
+val minecraftVersion = stonecutter.current.version
+val requiredJava = when {
+    stonecutter.current.parsed >= "26.1" -> JavaVersion.VERSION_25
+    stonecutter.current.parsed >= "1.20.5" -> JavaVersion.VERSION_21
+    stonecutter.current.parsed >= "1.18" -> JavaVersion.VERSION_17
+    stonecutter.current.parsed >= "1.17" -> JavaVersion.VERSION_16
+    else -> JavaVersion.VERSION_1_8
+}
+val fabricMinecraftRange: String = stonecutter.properties["mod.fabric_mc_range"]
+val syrupLibraryVersion = "${property("deps.syrup_library")}+$minecraftVersion-fabric"
 
 version = "${property("mod.version")}+$minecraftVersion-fabric"
 group = property("mod.group") as String
-base.archivesName = property("mod.id") as String
+val archiveName = property("mod.id") as String
+base.archivesName = archiveName
 
 repositories {
     maven("https://maven.syrupstudios.net/releases/")
     maven("https://jitpack.io")
 }
 
-val loomExtension = extensions.getByType<LoomGradleExtensionAPI>()
 dependencies {
-    add("minecraft", "com.mojang:minecraft:$minecraftVersion")
-    if (remappedMinecraft) add("mappings", loomExtension.officialMojangMappings())
-    val config = if (remappedMinecraft) "modImplementation" else "implementation"
-    add(config, "net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
-    add(config, "net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
-    add(config, "net.syrupstudios:syrup_library:${property("syrup_library_version")}")
+    minecraft("com.mojang:minecraft:$minecraftVersion")
+    loomx.applyMojangMappings()
+    modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+    modImplementation("net.syrupstudios:syrup_library:$syrupLibraryVersion")
     compileOnly("org.projectlombok:lombok:${property("deps.lombok")}")
     annotationProcessor("org.projectlombok:lombok:${property("deps.lombok")}")
     implementation("com.github.Querz:NBT:6.1")
 }
 
-loomExtension.apply {
-    enableTransitiveAccessWideners.set(false)
+loom {
     fabricModJsonPath.set(rootProject.file("src/main/resources/fabric.mod.json"))
-    if (remappedMinecraft) decompilerOptions.named("vineflower") {
+    decompilerOptions.named("vineflower") {
         options.put("mark-corresponding-synthetics", "1")
     }
-    runConfigs.configureEach { runDir = "run" }
+    runConfigs.configureEach {
+        preferGradleTask = true
+        generateRunConfig = true
+        runDirectory = rootProject.file("run")
+        jvmArguments.add("-Dmixin.debug.export=true")
+    }
 }
 
 sourceSets.main { java.exclude("**/loaders/forge/**", "**/loaders/neoforge/**") }
@@ -53,33 +57,33 @@ java {
     targetCompatibility = requiredJava
     toolchain {
         vendor = JvmVendorSpec.ADOPTIUM
-        languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+        languageVersion = JavaLanguageVersion.of(requiredJava.majorVersion)
     }
 }
 
 tasks.jar {
-    from(rootProject.file("LICENSE.md")) { rename { "${it}_${project.base.archivesName.get()}" } }
+    from(rootProject.file("LICENSE.md")) { rename("(.*)", "\$1_$archiveName") }
 }
 
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
-    options.release.set(targetJavaVersion)
+    options.release.set(requiredJava.majorVersion.toInt())
 }
 
 tasks.processResources {
     val props = mapOf(
-        "version" to project.version,
-        "mc" to minecraftVersion,
+        "version" to project.property("mod.version"),
+        "mc" to fabricMinecraftRange,
         "modId" to project.property("mod.id"),
         "modName" to project.property("mod.name"),
         "modDescription" to project.property("mod.description"),
         "authors" to project.property("mod.authors"),
         "license" to project.property("mod.license"),
         "sources" to project.property("mod.sources"),
-        "syrupLibraryVersion" to (project.property("syrup_library_version") as String).substringBefore('+'),
+        "syrupLibraryVersion" to syrupLibraryVersion.substringBefore('+'),
         "refmap" to "",
         "fl" to project.property("deps.fabric_loader"),
-        "java" to targetJavaVersion
+        "java" to requiredJava.majorVersion
     )
     inputs.properties(props)
     filesMatching("fabric.mod.json") { expand(props) }
@@ -92,20 +96,65 @@ tasks.processResources {
 
 tasks.register<Copy>("buildAndCollect") {
     group = "build"
-    val productionJar = if (remappedMinecraft) "remapJar" else "jar"
-    val sourceJar = if (remappedMinecraft) "remapSourcesJar" else "sourcesJar"
-    from(tasks.named(productionJar), tasks.named(sourceJar))
+    description = "Builds mod jars and copies results to `build/libs/{mod version}/`"
+    inputs.property("version", project.property("mod.version"))
+    from(loomx.modJar.flatMap { it.archiveFile }, loomx.modSourcesJar.flatMap { it.archiveFile })
     into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
-    dependsOn("build")
 }
 
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
-            artifactId = project.base.archivesName.get()
             from(components["java"])
+            artifactId = base.archivesName.get()
+        }
+    }
+    repositories {
+        maven {
+            name = "syrupStudios"
+            url = uri("https://maven.syrupstudios.net/releases/")
+            credentials(PasswordCredentials::class)
         }
     }
 }
 
-apply(from = rootProject.file("gradle/platform-publishing.gradle"))
+val compatibleVersions = stonecutter.properties.rawOrNull("mod.mc_releases")?.asList()?.map { it.toString() }.orEmpty()
+val outputFile = loomx.modJar.flatMap { it.archiveFile }
+val changelogFile = rootProject.file("CHANGELOG.md")
+val changelogText = providers.provider { if (changelogFile.isFile) changelogFile.readText() else "" }
+val curseForgeToken = providers.gradleProperty("publish.curseforge_token").orElse(providers.environmentVariable("CURSEFORGE_TOKEN"))
+val modrinthToken = providers.gradleProperty("publish.modrinth_token").orElse(providers.environmentVariable("MODRINTH_TOKEN"))
+
+publishMods {
+    file.set(outputFile)
+    dryRun = providers.gradleProperty("publish.dry_run")
+        .map { it.toBoolean() || !curseForgeToken.isPresent || !modrinthToken.isPresent }
+        .orElse(!curseForgeToken.isPresent || !modrinthToken.isPresent)
+    version = project.version.toString()
+    displayName = "${property("mod.name")} ${property("mod.version")} for Minecraft ${minecraftVersion} (Fabric)"
+    changelog = changelogText
+    type = when (property("publish.release_type").toString().lowercase()) {
+        "stable" -> STABLE
+        "beta" -> BETA
+        "alpha" -> ALPHA
+        else -> throw GradleException("publish.release_type must be stable, beta, or alpha")
+    }
+    modLoaders.add("fabric")
+    curseforge {
+        projectId = property("publish.curseforge").toString()
+        accessToken = curseForgeToken
+        compatibleVersions.forEach(minecraftVersions::add)
+        client = true
+        server = true
+        requires("syrup-library")
+        requires("fabric-api")
+    }
+    modrinth {
+        projectId = property("publish.modrinth").toString()
+        accessToken = modrinthToken
+        compatibleVersions.forEach(minecraftVersions::add)
+        environment = CLIENT_AND_SERVER
+        requires { id = "9tBNzmjo" }
+        requires("fabric-api")
+    }
+}
