@@ -13,7 +13,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.syrupstudios.syrupessentials.config.SyrupEssentialsConfig;
 import net.syrupstudios.syrupessentials.util.DataManager;
-import net.syrupstudios.syrupessentials.util.TeleportPos;
+import net.syrupstudios.syruplibrary.teleport.SyrupTeleports;
+import net.syrupstudios.syruplibrary.teleport.TeleportTarget;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -27,9 +28,9 @@ public class PlayerData {
     private final UUID playerId;
     private final String playerName;
     @Nullable
-    private TeleportPos lastLocation;
+    private TeleportTarget lastLocation;
     private Homes homes;
-    private LinkedList<TeleportPos> locationHistory;
+    private LinkedList<TeleportTarget> locationHistory;
     private boolean update;
     private boolean isMuted;
     private boolean canFly;
@@ -83,20 +84,20 @@ public class PlayerData {
 
     public static void addTeleportHistory(ServerPlayer player, ResourceKey<Level> dimension, Vec3 pos) {
         DataManager.getOrCreatePlayer(player).ifPresent(data -> data.addTeleportHistory(
-                new TeleportPos(dimension, pos, player.getXRot(), player.getYRot())));
+                new TeleportTarget(dimension, pos, player.getYRot(), player.getXRot())));
     }
 
     public void addTeleportHistory(ServerPlayer player) {
-        addTeleportHistory(player, player.level().dimension(), player.position());
+        addTeleportHistory(SyrupTeleports.capture(player));
     }
 
-    public void addTeleportHistory(TeleportPos pos) {
+    public void addTeleportHistory(TeleportTarget pos) {
         locationHistory.add(pos);
         trimTeleportHistory();
     }
 
     public void addHome(String name, ServerPlayer serverPlayer){
-        this.homes.addLocation(name, new TeleportPos(serverPlayer.level(), serverPlayer.position(), serverPlayer.getXRot(), serverPlayer.getYRot()));
+        this.homes.addLocation(name, SyrupTeleports.capture(serverPlayer));
         triggerUpdate();
     }
 
@@ -105,7 +106,7 @@ public class PlayerData {
         triggerUpdate();
     }
 
-    public Optional<TeleportPos> popLocationHistory() {
+    public Optional<TeleportTarget> popLocationHistory() {
         trimTeleportHistory();
         if (!locationHistory.isEmpty()) {
             return Optional.of(locationHistory.removeLast());

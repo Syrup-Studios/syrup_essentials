@@ -20,13 +20,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.syrupstudios.syruplibrary.teleport.TeleportTarget;
 import net.syrupstudios.syrupessentials.config.SyrupEssentialsConfig;
 import net.syrupstudios.syrupessentials.data.PlayerData;
 import net.syrupstudios.syrupessentials.data.WorldData;
 import net.syrupstudios.syrupessentials.util.CommandUtil;
 import net.syrupstudios.syrupessentials.util.DataManager;
 import net.syrupstudios.syrupessentials.util.TeleportManager;
-import net.syrupstudios.syrupessentials.util.TeleportPos;
 import org.slf4j.Logger;
 
 import java.util.Locale;
@@ -184,7 +184,7 @@ public class TeleportCommands {
         try{
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
             teleportPlayer(
-                    new TeleportPos(DimensionArgument.getDimension(context, "dimension"), serverPlayer.position(), 0.0f, 0.0f),
+                    new TeleportTarget(DimensionArgument.getDimension(context, "dimension").dimension(), serverPlayer.position(), 0.0f, 0.0f),
                     serverPlayer,
                     true
             );
@@ -207,7 +207,7 @@ public class TeleportCommands {
         try{
             ServerPlayer serverPlayer = EntityArgument.getPlayer(context, "player");
             PlayerData player = DataManager.getOrCreatePlayer(serverPlayer).orElseThrow();
-            Optional<TeleportPos> lastLocation = player.popLocationHistory();
+            Optional<TeleportTarget> lastLocation = player.popLocationHistory();
 
             if(lastLocation.isPresent()){
                 teleportPlayer(lastLocation.get(), context.getSource().getPlayerOrException(), true);
@@ -238,7 +238,7 @@ public class TeleportCommands {
             BlockPos spawnPos = level.getSharedSpawnPos();
             //?}
             teleportPlayer(
-                    new TeleportPos(level.dimension(), Vec3.atCenterOf(spawnPos), 0.0f, 0.0f),
+                    new TeleportTarget(level.dimension(), Vec3.atCenterOf(spawnPos), 0.0f, 0.0f),
                     serverPlayer,
                     true
             );
@@ -279,7 +279,7 @@ public class TeleportCommands {
         try{
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
             PlayerData player = DataManager.getOrCreatePlayer(serverPlayer).orElseThrow();
-            Optional<TeleportPos> lastLocation = player.popLocationHistory();
+            Optional<TeleportTarget> lastLocation = player.popLocationHistory();
 
             if(lastLocation.isPresent()){
                 teleportPlayer(lastLocation.get(), serverPlayer, false);
@@ -450,7 +450,7 @@ public class TeleportCommands {
         try{
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
             PlayerData player = DataManager.getOrCreatePlayer(serverPlayer).orElseThrow();
-            Map<String, TeleportPos> homes = player.getHomes().getDestinations();
+            Map<String, TeleportTarget> homes = player.getHomes().getDestinations();
 
             if(homes.size() == 1){
                 player.getHomes().getDestinations().clear();
@@ -469,7 +469,7 @@ public class TeleportCommands {
         try {
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
             PlayerData player = DataManager.getOrCreatePlayer(serverPlayer).orElseThrow();
-            Map<String, TeleportPos> homes = player.getHomes().getDestinations();
+            Map<String, TeleportTarget> homes = player.getHomes().getDestinations();
             String homeName = context.getArgument("home_name", String.class);
             if(!homes.containsKey(homeName)){
                 CommandUtil.commandFailure("No home saved with name: "+homeName, context);
@@ -495,7 +495,7 @@ public class TeleportCommands {
         try {
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
             PlayerData player = DataManager.getOrCreatePlayer(serverPlayer).orElseThrow();
-            Map<String, TeleportPos> homes = player.getHomes().getDestinations();
+            Map<String, TeleportTarget> homes = player.getHomes().getDestinations();
 
             if(homes.size() == 1){
                 teleportPlayer(homes.get(homes.keySet().iterator().next()), serverPlayer, true);

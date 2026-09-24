@@ -4,13 +4,13 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.syrupstudios.syruplibrary.teleport.SyrupTeleports;
 import net.syrupstudios.syrupessentials.commands.ConfigCommands;
 import net.syrupstudios.syrupessentials.commands.TeleportCommands;
 import net.syrupstudios.syrupessentials.config.SyrupEssentialsConfig;
 import net.syrupstudios.syrupessentials.data.PlayerData;
 import net.syrupstudios.syrupessentials.util.DataManager;
 import net.syrupstudios.syrupessentials.util.TeleportManager;
-import net.syrupstudios.syrupessentials.util.TeleportPos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +39,7 @@ public final class SyrupEssentials {
 
 	public static void saveDeathLocation(ServerPlayer player) {
 		PlayerData playerData = DataManager.getOrCreatePlayer(player).orElseThrow();
-		TeleportPos deathLoc = new TeleportPos(player.level(), player.position(), player.getXRot(), player.getYRot());
-		playerData.addTeleportHistory(deathLoc);
+		playerData.addTeleportHistory(SyrupTeleports.capture(player));
 	}
 
 	public static void playerJoin(ServerPlayer player) {

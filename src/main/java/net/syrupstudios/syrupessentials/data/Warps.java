@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.syrupstudios.syrupessentials.util.TeleportPos;
+import net.syrupstudios.syruplibrary.teleport.TeleportTarget;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ public class Warps extends Locations {
         super(new HashMap<>());
     }
 
-    public Warps(Map<String, TeleportPos> destinations){
+    public Warps(Map<String, TeleportTarget> destinations){
         super(new HashMap<>(destinations));
     }
 
@@ -32,7 +32,7 @@ public class Warps extends Locations {
     }
 
     public static final Codec<Warps> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-            Codec.unboundedMap(Codec.STRING, TeleportPos.CODEC)
+            Codec.unboundedMap(Codec.STRING, TeleportTarget.CODEC)
                     .fieldOf("destinations")
                     .forGetter(Locations::getDestinations)
     ).apply(builder, Warps::new));

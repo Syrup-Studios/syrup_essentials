@@ -5,9 +5,9 @@ import net.minecraft.server.commands.TeleportCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.syrupstudios.syruplibrary.teleport.SyrupTeleports;
 import net.syrupstudios.syrupessentials.data.PlayerData;
 import net.syrupstudios.syrupessentials.util.DataManager;
-import net.syrupstudios.syrupessentials.util.TeleportPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
@@ -43,6 +43,6 @@ public class TeleportCommandMixin {
         DataManager.getOrCreatePlayer(serverPlayer)
                 .orElseThrow()
                 .addTeleportHistory(
-                        new TeleportPos(target.level(), target.position(), target.getXRot(), target.getYRot()));
+                        SyrupTeleports.capture(serverPlayer));
     }
 }

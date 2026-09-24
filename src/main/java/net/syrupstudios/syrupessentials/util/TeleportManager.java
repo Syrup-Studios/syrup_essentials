@@ -260,12 +260,7 @@ public class TeleportManager {
 
         if (!request.isTpaHere()) {
             return teleportPlayer(
-                    new TeleportPos(
-                            receiver.level(),
-                            receiver.position(),
-                            receiver.getXRot(),
-                            receiver.getYRot()
-                    ),
+                    SyrupTeleports.capture(receiver),
                     sender,
                     true
             );
@@ -273,12 +268,7 @@ public class TeleportManager {
 
         if (request.isTpaHere()) {
             return teleportPlayer(
-                    new TeleportPos(
-                            sender.level(),
-                            sender.position(),
-                            sender.getXRot(),
-                            sender.getYRot()
-                    ),
+                    SyrupTeleports.capture(sender),
                     receiver,
                     true
             );
@@ -287,7 +277,7 @@ public class TeleportManager {
         return false;
     }
 
-    public static boolean teleportPlayer(TeleportPos tpos, ServerPlayer serverPlayer, boolean addToTeleportHistory){
+    public static boolean teleportPlayer(TeleportTarget target, ServerPlayer serverPlayer, boolean addToTeleportHistory){
         PlayerData player = DataManager.getOrCreatePlayer(serverPlayer).orElseThrow();
         if(addToTeleportHistory) {
             player.addTeleportHistory(serverPlayer);
@@ -296,7 +286,7 @@ public class TeleportManager {
 
         return SyrupTeleports.teleport(
                 serverPlayer,
-                new TeleportTarget(tpos.getDimensionId(), tpos.getPos(), tpos.getYaw(), tpos.getPitch())
+                target
         ) == TeleportResult.SUCCESS;
     }
 
@@ -356,7 +346,7 @@ public class TeleportManager {
                 lookedAtBlock
         );
         TeleportManager.teleportPlayer(
-                new TeleportPos(level, Vec3.atCenterOf(topOfColumn), player.getXRot(), player.getYRot()),
+                new TeleportTarget(level.dimension(), Vec3.atCenterOf(topOfColumn), player.getYRot(), player.getXRot()),
                 player,
                 true
         );

@@ -14,7 +14,7 @@ publish:
   modrinth: "5ilOuE0e"
 
 deps.lombok: "1.18.38"
-deps.syrup_library: "0.3.0"
+deps.syrup_library: "0.5.0"
 loomx.loom_version: "1.17.14"
 
 "1.20.1":

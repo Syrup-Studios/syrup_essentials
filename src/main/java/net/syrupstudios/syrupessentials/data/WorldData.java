@@ -7,7 +7,7 @@ import lombok.Data;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerPlayer;
-import net.syrupstudios.syrupessentials.util.TeleportPos;
+import net.syrupstudios.syruplibrary.teleport.SyrupTeleports;
 import org.slf4j.Logger;
 
 import java.util.Optional;
@@ -61,7 +61,7 @@ public class WorldData {
     }
 
     public void createWarp(String name, ServerPlayer serverPlayer) {
-        this.warps.addLocation(name, new TeleportPos(serverPlayer.level(), serverPlayer.position(), serverPlayer.getXRot(), serverPlayer.getYRot()));
+        this.warps.addLocation(name, SyrupTeleports.capture(serverPlayer));
         triggerUpdate();
     }
 
