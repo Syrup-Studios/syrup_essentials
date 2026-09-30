@@ -1,7 +1,6 @@
 package net.syrupstudios.syrupessentials.loaders.forge;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
@@ -17,11 +16,6 @@ public final class SyrupEssentialsForge {
     public SyrupEssentialsForge() {
         SyrupEssentials.initialize();
         MinecraftForge.EVENT_BUS.register(this);
-    }
-
-    @SubscribeEvent
-    public void registerCommands(RegisterCommandsEvent event) {
-        SyrupEssentials.registerCommands(event.getDispatcher());
     }
 
     @SubscribeEvent

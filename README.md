@@ -16,3 +16,7 @@ This repository builds ten Fabric, Forge, and NeoForge targets.
 The active target is `1.20.1-fabric`, selected in `stonecutter.gradle.kts`. Target-specific settings are in `stonecutter.properties.yaml`. Collected jars are written to `build/libs/0.4.1/`.
 
 Gradle downloads the Java 17, 21, or 25 toolchain for the selected target.
+
+## Command permissions
+
+Each command uses `syrup_essentials.command.<command>`. User commands default to all sources. `setwarp`, `teleport_last`, `delwarp`, `tpx`, `jump`, and `reload` default to game masters. On Fabric 26.2+, the node is represented as `syrup_essentials:command.<command>`; Forge, NeoForge, and older Fabric use `syrup_essentials.command.<command>`.

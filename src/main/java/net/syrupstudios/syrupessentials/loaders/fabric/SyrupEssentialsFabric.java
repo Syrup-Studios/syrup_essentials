@@ -1,7 +1,6 @@
 package net.syrupstudios.syrupessentials.loaders.fabric;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -12,8 +11,6 @@ public final class SyrupEssentialsFabric implements ModInitializer {
     @Override
     public void onInitialize() {
         SyrupEssentials.initialize();
-        CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, selection) ->
-                SyrupEssentials.registerCommands(dispatcher));
         ServerLifecycleEvents.SERVER_STARTED.register(SyrupEssentials::serverStarted);
         ServerTickEvents.START_SERVER_TICK.register(SyrupEssentials::tick);
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->

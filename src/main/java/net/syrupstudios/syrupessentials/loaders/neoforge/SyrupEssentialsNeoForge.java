@@ -4,7 +4,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
@@ -17,11 +16,6 @@ public final class SyrupEssentialsNeoForge {
     public SyrupEssentialsNeoForge() {
         SyrupEssentials.initialize();
         NeoForge.EVENT_BUS.register(this);
-    }
-
-    @SubscribeEvent
-    public void registerCommands(RegisterCommandsEvent event) {
-        SyrupEssentials.registerCommands(event.getDispatcher());
     }
 
     @SubscribeEvent

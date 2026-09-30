@@ -1,11 +1,10 @@
 package net.syrupstudios.syrupessentials.commands;
 
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.syrupstudios.syruplibrary.command.SyrupCommands;
 import net.syrupstudios.syruplibrary.config.diagnostic.ConfigIssue;
 import net.syrupstudios.syruplibrary.config.diagnostic.ConfigIssueSeverity;
 import net.syrupstudios.syruplibrary.config.diagnostic.ConfigLoadResult;
@@ -15,15 +14,9 @@ public final class ConfigCommands {
     private ConfigCommands() {
     }
 
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("syrupessentials")
-                .then(Commands.literal("reload")
-                        //? if >=1.21.11 {
-                        /*.requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))*/
-                        //?} else {
-                        .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
-                        //?}
-                        .executes(ConfigCommands::reload)));
+    public static void register(SyrupCommands.Registrar registrar) {
+        registrar.command("reload", SyrupCommands.Access.GAME_MASTERS,
+                command -> command.executes(ConfigCommands::reload));
     }
 
     private static int reload(CommandContext<CommandSourceStack> context) {

@@ -1,9 +1,8 @@
 package net.syrupstudios.syrupessentials;
 
-import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.syrupstudios.syruplibrary.command.SyrupCommands;
 import net.syrupstudios.syruplibrary.teleport.SyrupTeleports;
 import net.syrupstudios.syrupessentials.commands.ConfigCommands;
 import net.syrupstudios.syrupessentials.commands.TeleportCommands;
@@ -24,11 +23,11 @@ public final class SyrupEssentials {
 	public static void initialize() {
 		LOGGER.info("Initializing Syrup Essentials");
 		SyrupEssentialsConfig.initialize();
-	}
-
-	public static void registerCommands(CommandDispatcher<CommandSourceStack> commandDispatcher) {
-		TeleportCommands.register(commandDispatcher);
-		ConfigCommands.register(commandDispatcher);
+		SyrupCommands.register(MOD_ID, "syrupessentials",
+				SyrupEssentialsConfig.get().registerToNamespace(),
+				SyrupEssentialsConfig.get().registerAliasAsWellAsNamespace(),
+				TeleportCommands::register);
+		SyrupCommands.register(MOD_ID, "syrupessentials", true, false, ConfigCommands::register);
 	}
 
 	public static void serverStarted(MinecraftServer server) {
