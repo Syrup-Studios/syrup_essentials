@@ -1,6 +1,7 @@
 package net.syrupstudios.syrupessentials.util;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,8 +14,8 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -164,6 +165,30 @@ public class DataManager {
 
         return Optional.of(PLAYERS.computeIfAbsent(player.getUUID(),
                 k -> new PlayerData(player.getUUID(), player.getName().getString())));
+    }
+
+    public static Optional<PlayerData> getSavedPlayerData(MinecraftServer server, UUID playerId) {
+        PlayerData inMemory = PLAYERS.get(playerId);
+        if (inMemory != null) {
+            return Optional.of(inMemory);
+        }
+        Path path = server.getWorldPath(LevelResource.ROOT)
+                .resolve(MOD_PATH).resolve(PLAYER_PATH).resolve(playerId + ".snbt");
+        if (!Files.exists(path)) {
+            return Optional.empty();
+        }
+        try {
+            net.minecraft.nbt.CompoundTag tag;
+            //? if >=1.21.11 {
+            /*tag = TagParser.parseCompoundFully(Files.readString(path));
+            *///?} else {
+            tag = TagParser.parseTag(Files.readString(path));
+            //?}
+            return PlayerData.CODEC.parse(NbtOps.INSTANCE, tag.get("playerData")).result();
+        } catch (Exception e) {
+            LOGGER.warn("Could not read saved player data for {}", playerId, e);
+            return Optional.empty();
+        }
     }
 
     public static Optional<WorldData> getOrCreateWorld(MinecraftServer server){

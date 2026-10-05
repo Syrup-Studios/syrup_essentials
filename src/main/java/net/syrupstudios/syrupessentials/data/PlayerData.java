@@ -73,6 +73,11 @@ public class PlayerData {
         this.update = true;
     }
 
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+        triggerUpdate();
+    }
+
     public void clearUpdate(){
         this.update = false;
         this.getHomes().clearUpdate();

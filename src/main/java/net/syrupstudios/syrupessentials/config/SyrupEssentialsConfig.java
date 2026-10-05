@@ -39,6 +39,12 @@ public final class SyrupEssentialsConfig {
 
     private static final ConfigSection TELEPORTATION = SPEC.section(
             "teleportation", "Travel commands and saved-destination settings.");
+    private static final ConfigSection MISCELLANEOUS = SPEC.section(
+            "miscellaneous", "General player commands.");
+    private static final ConfigValue<Boolean> LEADERBOARD_ENABLED = MISCELLANEOUS.bool(
+            "leaderboard_enabled", true, "Whether /leaderboard is available.");
+    private static final ConfigValue<Boolean> NICKNAME_ENABLED = MISCELLANEOUS.bool(
+            "nickname_enabled", true, "Whether /nickname is available.");
     private static final ConfigSection BACK = TELEPORTATION.section(
             "back", "Controls the location history used by /back.");
     private static final ConfigValue<Boolean> BACK_ENABLED = BACK.bool(
@@ -142,6 +148,7 @@ public final class SyrupEssentialsConfig {
     public static final class Values {
         private static final Teleportation TELEPORTATION_VALUES = new Teleportation();
         private static final Persistence PERSISTENCE_VALUES = new Persistence();
+        private static final Miscellaneous MISCELLANEOUS_VALUES = new Miscellaneous();
 
         public boolean registerAliasAsWellAsNamespace() {
             return REGISTER_ALIAS_AS_WELL_AS_NAMESPACE.get();
@@ -157,6 +164,10 @@ public final class SyrupEssentialsConfig {
 
         public Persistence persistence() {
             return PERSISTENCE_VALUES;
+        }
+
+        public Miscellaneous miscellaneous() {
+            return MISCELLANEOUS_VALUES;
         }
     }
 
@@ -213,5 +224,10 @@ public final class SyrupEssentialsConfig {
     public static final class Persistence {
         public int autosaveIntervalSeconds() { return AUTOSAVE_INTERVAL.get(); }
         public long autosaveIntervalTicks() { return AUTOSAVE_INTERVAL.get() * 20L; }
+    }
+
+    public static final class Miscellaneous {
+        public boolean leaderboardEnabled() { return LEADERBOARD_ENABLED.get(); }
+        public boolean nicknameEnabled() { return NICKNAME_ENABLED.get(); }
     }
 }

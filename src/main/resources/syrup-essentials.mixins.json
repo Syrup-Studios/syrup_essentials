@@ -4,7 +4,9 @@
 	"refmap": "${refmap}",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"TeleportCommandMixin"
+		"TeleportCommandMixin",
+		"PlayerNicknameMixin",
+		"ServerPlayerNicknameMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

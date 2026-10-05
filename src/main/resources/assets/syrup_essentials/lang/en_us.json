@@ -1,0 +1,9 @@
+{
+  "syrup_essentials.nickname.player_only": "Only a player can set a nickname.",
+  "syrup_essentials.nickname.too_long": "Nickname is too long (maximum 32 characters).",
+  "syrup_essentials.nickname.reset": "Nickname reset.",
+  "syrup_essentials.nickname.changed": "Nickname changed to '%s'.",
+  "syrup_essentials.leaderboard.title": "Leaderboard [ %s ]",
+  "syrup_essentials.leaderboard.empty": "No data.",
+  "syrup_essentials.leaderboard.options": "Available leaderboards: %s"
+}

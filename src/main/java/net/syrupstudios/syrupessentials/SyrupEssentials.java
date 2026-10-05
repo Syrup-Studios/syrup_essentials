@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.syrupstudios.syruplibrary.command.SyrupCommands;
 import net.syrupstudios.syruplibrary.teleport.SyrupTeleports;
 import net.syrupstudios.syrupessentials.commands.ConfigCommands;
+import net.syrupstudios.syrupessentials.commands.MiscellaneousCommands;
 import net.syrupstudios.syrupessentials.commands.TeleportCommands;
 import net.syrupstudios.syrupessentials.config.SyrupEssentialsConfig;
 import net.syrupstudios.syrupessentials.data.PlayerData;
@@ -27,6 +28,10 @@ public final class SyrupEssentials {
 				SyrupEssentialsConfig.get().registerToNamespace(),
 				SyrupEssentialsConfig.get().registerAliasAsWellAsNamespace(),
 				TeleportCommands::register);
+		SyrupCommands.register(MOD_ID, "syrupessentials",
+				SyrupEssentialsConfig.get().registerToNamespace(),
+				SyrupEssentialsConfig.get().registerAliasAsWellAsNamespace(),
+				MiscellaneousCommands::register);
 		SyrupCommands.register(MOD_ID, "syrupessentials", true, false, ConfigCommands::register);
 	}
 
@@ -44,6 +49,9 @@ public final class SyrupEssentials {
 	public static void playerJoin(ServerPlayer player) {
 		try {
 			dataManager.loadPlayer(player.getUUID());
+			((net.minecraft.server.level.ServerLevel) player.level()).getServer().getPlayerList().broadcastAll(new net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket(
+					net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME,
+					player));
 		}
 		catch (Exception e) {
 			LOGGER.error("Error Loading Player: {}", player.getDisplayName().getString());
