@@ -2,7 +2,7 @@ mod:
   id: "syrup_essentials"
   name: "Syrup Essentials"
   group: "net.syrupstudios"
-  version: "0.4.1"
+  version: "0.4.2"
   description: "Syrup Studio's Essentials Mod adding commands for players and server operators"
   authors: "SodaSyrup"
   license: "RSL-1.0"

@@ -13,7 +13,7 @@ This repository builds ten Fabric, Forge, and NeoForge targets.
 ./gradlew buildAndCollect
 ```
 
-The active target is `1.20.1-fabric`, selected in `stonecutter.gradle.kts`. Target-specific settings are in `stonecutter.properties.yaml`. Collected jars are written to `build/libs/0.4.1/`.
+The active target is `1.20.1-fabric`, selected in `stonecutter.gradle.kts`. Target-specific settings are in `stonecutter.properties.yaml`. Collected jars are written to `build/libs/0.4.2/`.
 
 Gradle downloads the Java 17, 21, or 25 toolchain for the selected target.
 
